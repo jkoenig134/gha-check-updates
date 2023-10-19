@@ -1,0 +1,32 @@
+{
+  "name": "gha-check-updates",
+  "version": "1.0.4",
+  "description": "Check for outdated github actions.",
+  "license": "MIT",
+  "author": "js-soft GmbH <info@js-soft.com> (https://www.js-soft.com/)",
+  "type": "module",
+  "bin": {
+    "gcu": "dist/index.js",
+    "gha-check-updates": "dist/index.js"
+  },
+  "files": [
+    "dist/index.js"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "yaml": "^2.3.3",
+    "zx": "^7.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.7",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": false
+  }
+}
