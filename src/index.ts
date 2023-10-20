@@ -56,23 +56,42 @@ for (const file of files) {
       .map((v: string) => v.split("refs/tags/")[1])
       .filter((v: string) => v && v.length < 7)
 
-    // const tagsByTagLengths = tags.reduce((acc: any, v: string) => {
-    //   const length = v.length
-    //   if (!acc[length]) {
-    //     acc[length] = []
-    //   }
+    const tagsByTagLengths: Record<number, string[] | undefined> = tags.reduce((acc: any, v: string) => {
+      const length = v.length
+      if (!acc[length]) {
+        acc[length] = []
+      }
 
-    //   acc[length].push(v)
-    //   return acc
-    // }, {})
-
-    // console.log(tagsByTagLengths)
+      acc[length].push(v)
+      return acc
+    }, {})
 
     const single = tags.filter((v) => v.length === 2)
     const lastSingle = single[single.length - 1]
 
     const full = tags.filter((v) => v.length === 6)
     const lastFull = full[full.length - 1]
+
+    if (!lastSingle && !lastFull) {
+      const tagsWithCorrectLength = tagsByTagLengths[version.length]
+      if (tagsWithCorrectLength?.length) {
+        const versionToCompare = tagsWithCorrectLength[tagsWithCorrectLength.length - 1]
+        if (versionToCompare !== version) {
+          notUpToDates.push(
+            `  Action '${usesDeclaration}' has a newer version available: '${versionToCompare}'.${
+              lastFull || lastSingle ? ` You can also upgrade to '${lastSingle}' or '${lastFull}'.` : ""
+            }`
+          )
+        }
+
+        continue
+      } else {
+        notUpToDates.push(
+          `  Action '${usesDeclaration}' could not be checked. You can check available versions yourself: https://github.com/${repo}/tags`
+        )
+        continue
+      }
+    }
 
     const versionToCompare = version.length === 2 ? lastSingle : lastFull
     if (versionToCompare !== version) {
