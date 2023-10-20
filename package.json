@@ -2,6 +2,7 @@
   "name": "gha-check-updates",
   "version": "1.0.6",
   "description": "Check for outdated github actions.",
+  "repository": "github:jkoenig134/gha-check-updates",
   "license": "MIT",
   "author": "js-soft GmbH <info@js-soft.com> (https://www.js-soft.com/)",
   "type": "module",
