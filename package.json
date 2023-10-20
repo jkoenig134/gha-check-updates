@@ -1,6 +1,6 @@
 {
   "name": "gha-check-updates",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Check for outdated github actions.",
   "license": "MIT",
   "author": "js-soft GmbH <info@js-soft.com> (https://www.js-soft.com/)",
@@ -27,6 +27,6 @@
   },
   "publishConfig": {
     "access": "public",
-    "provenance": false
+    "provenance": true
   }
 }
