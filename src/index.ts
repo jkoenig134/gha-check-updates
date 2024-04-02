@@ -54,7 +54,7 @@ for (const file of files) {
     const tags = tagsOutput.stdout
       .split("\n")
       .map((v: string) => v.split("refs/tags/")[1])
-      .filter((v: string) => v && v.length < 7)
+      .filter((v: string) => v && v.startsWith("v"))
 
     const tagsByTagLengths: Record<number, string[] | undefined> = tags.reduce((acc: any, v: string) => {
       const length = v.length
@@ -69,7 +69,15 @@ for (const file of files) {
     const single = tags.filter((v) => v.length === 2)
     const lastSingle = single[single.length - 1]
 
-    const full = tags.filter((v) => v.length === 6)
+    const full = tags.filter((v) => {
+      const match = v.match(
+        /^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-(0|[1-9A-Za-z-][0-9A-Za-z-]*)(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$/
+      )
+
+      if (!match) return false
+
+      return match.length > 0
+    })
     const lastFull = full[full.length - 1]
 
     if (!lastSingle && !lastFull) {
@@ -94,10 +102,14 @@ for (const file of files) {
     }
 
     const versionToCompare = version.length === 2 ? lastSingle : lastFull
+
     if (versionToCompare !== version) {
-      notUpToDates.push(
-        `  Action '${usesDeclaration}' has a newer version available: '${lastSingle}' or '${lastFull}'.`
-      )
+      const latestVersions = [lastSingle, lastFull]
+        .filter((v) => typeof v !== "undefined")
+        .map((v) => `'${v}'`)
+        .join(" or ")
+
+      notUpToDates.push(`  Action '${usesDeclaration}' has a newer version available: ${latestVersions}.`)
     }
   }
 
