@@ -39,7 +39,6 @@ for (const file of files) {
 
   $.verbose = false
 
-  const upToDates = []
   const notUpToDates = []
 
   for (const usesDeclaration of uniqueUsesDeclarations) {
@@ -54,7 +53,7 @@ for (const file of files) {
     const tags = tagsOutput.stdout
       .split("\n")
       .map((v: string) => v.split("refs/tags/")[1])
-      .filter((v: string) => v && v.startsWith("v"))
+      .filter((v: string) => !!v)
 
     const tagsByTagLengths: Record<number, string[] | undefined> = tags.reduce((acc: any, v: string) => {
       const length = v.length
