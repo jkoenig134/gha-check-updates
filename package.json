@@ -18,13 +18,13 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "yaml": "^2.3.3",
-    "zx": "^7.2.3"
+    "yaml": "^2.7.0",
+    "zx": "^8.3.2"
   },
   "devDependencies": {
-    "@types/node": "^20.8.7",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "@types/node": "^22.13.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
   },
   "publishConfig": {
     "access": "public",
