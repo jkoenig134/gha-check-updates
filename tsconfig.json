@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
-        "declaration": true,
+        "declaration": false,
         "downlevelIteration": true,
-        "emitDecoratorMetadata": true,
+        "emitDecoratorMetadata": false,
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
@@ -16,7 +16,7 @@
         "noImplicitReturns": true,
         "outDir": "dist",
         "resolveJsonModule": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "strict": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": false,
