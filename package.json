@@ -1,6 +1,6 @@
 {
   "name": "gha-check-updates",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Check for outdated github actions.",
   "repository": "github:jkoenig134/gha-check-updates",
   "license": "MIT",
@@ -18,13 +18,13 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "yaml": "^2.7.0",
-    "zx": "^8.3.2"
+    "simple-git": "^3.27.0",
+    "yaml": "^2.7.0"
   },
   "devDependencies": {
-    "@types/node": "^22.13.4",
+    "@types/node": "^22.13.9",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   },
   "publishConfig": {
     "access": "public",

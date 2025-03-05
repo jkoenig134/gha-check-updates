@@ -3,8 +3,8 @@
 const baseDir = process.argv[2] ?? process.cwd()
 
 import fs from "fs"
+import { simpleGit } from "simple-git"
 import { parse } from "yaml"
-import { $ } from "zx"
 
 if (!fs.existsSync(".github/workflows")) {
   console.log("No .github/workflows directory in your current directory '${process.cwd()}'.")
@@ -37,8 +37,6 @@ for (const file of files) {
 
   const uniqueUsesDeclarations: string[] = [...new Set(usesDeclarations)]
 
-  $.verbose = false
-
   const notUpToDates = []
 
   for (const usesDeclaration of uniqueUsesDeclarations) {
@@ -48,9 +46,9 @@ for (const file of files) {
 
     const safeRepo = repo.split("/").slice(0, 2).join("/")
 
-    const tagsOutput =
-      await $`git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' https://github.com/${safeRepo}.git`
-    const tags = tagsOutput.stdout
+    const tagsOutput = await simpleGit().listRemote(["--tags", `https://github.com/${safeRepo}.git`])
+
+    const tags = tagsOutput
       .split("\n")
       .map((v: string) => v.split("refs/tags/")[1])
       .filter((v: string) => !!v)
