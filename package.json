@@ -1,6 +1,6 @@
 {
   "name": "gha-check-updates",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Check for outdated github actions.",
   "repository": "github:jkoenig134/gha-check-updates",
   "license": "MIT",

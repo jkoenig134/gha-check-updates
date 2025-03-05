@@ -46,7 +46,9 @@ for (const file of files) {
 
     const safeRepo = repo.split("/").slice(0, 2).join("/")
 
-    const tagsOutput = await simpleGit().listRemote(["--tags", `https://github.com/${safeRepo}.git`])
+    const tagsOutput = await simpleGit({
+      config: ["versionsort.suffix=-"],
+    }).listRemote(["--tags", "--sort=v:refname", `https://github.com/${safeRepo}.git`])
 
     const tags = tagsOutput
       .split("\n")
