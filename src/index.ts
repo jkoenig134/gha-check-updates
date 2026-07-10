@@ -181,7 +181,7 @@ while (files.length > 0) {
       // Prefer same-length tag as primary; surface major/full tags as alternatives
       if (lengthMatch && lengthMatch !== version) {
         const also = [lastSingle, lastFull]
-          .filter((v) => typeof v !== 'undefined' && v !== lengthMatch)
+          .filter((v) => v !== undefined && v !== lengthMatch)
           .map((v) => `'${v}'`)
           .join(' or ');
 
@@ -192,7 +192,7 @@ while (files.length > 0) {
         );
       } else {
         const latestVersions = [lastSingle, lastFull]
-          .filter((v) => typeof v !== 'undefined')
+          .filter((v) => v !== undefined)
           .map((v) => `'${v}'`)
           .join(' or ');
 
