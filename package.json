@@ -18,13 +18,13 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "simple-git": "^3.27.0",
-    "yaml": "^2.7.0"
+    "simple-git": "^3.36.0",
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
-    "@types/node": "^22.13.9",
+    "@types/node": "^26.1.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^6.0.3"
   },
   "publishConfig": {
     "access": "public",

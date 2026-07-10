@@ -2,7 +2,6 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "declaration": false,
-        "downlevelIteration": true,
         "emitDecoratorMetadata": false,
         "esModuleInterop": true,
         "experimentalDecorators": true,
@@ -15,12 +14,16 @@
         "moduleResolution": "nodenext",
         "noImplicitReturns": true,
         "outDir": "dist",
+        "rootDir": "./src",
         "resolveJsonModule": true,
         "sourceMap": false,
         "strict": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": false,
         "target": "es2021",
+        "types": [
+            "node"
+        ],
         "typeRoots": [
             "./node_modules/@types"
         ]
