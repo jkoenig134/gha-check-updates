@@ -6,12 +6,12 @@ import fs from "node:fs"
 import { simpleGit } from "simple-git"
 import { parse } from "yaml"
 
-if (!fs.existsSync(`${baseDir}/.github/workflows`)) {
+const basePath = `${baseDir}/.github/workflows`;
+
+if (!fs.existsSync(basePath)) {
   console.log("No .github/workflows directory in your current directory '${process.cwd()}'.")
   process.exit(1)
 }
-
-const basePath = `${baseDir}/.github/workflows`
 
 function collectFiles(dir: string): string[] {
   const result: string[] = []
