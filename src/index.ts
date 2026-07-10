@@ -6,40 +6,94 @@ import fs from "fs"
 import { simpleGit } from "simple-git"
 import { parse } from "yaml"
 
-if (!fs.existsSync(".github/workflows")) {
+if (!fs.existsSync(`${baseDir}/.github/workflows`)) {
   console.log("No .github/workflows directory in your current directory '${process.cwd()}'.")
   process.exit(1)
 }
 
 const basePath = `${baseDir}/.github/workflows`
 
-// find all files in the .github/workflows directory using nodejs fs
-const files = fs.readdirSync(basePath)
+function collectFiles(dir: string): string[] {
+  const result: string[] = []
 
-for (const file of files) {
-  const path = `${basePath}/${file}`
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = `${dir}/${entry.name}`
+
+    if (entry.isDirectory()) {
+      result.push(...collectFiles(full))
+      continue
+    }
+
+    const name = entry.name.toLowerCase()
+    if (name.endsWith(".yml") || name.endsWith(".yaml")) {
+      result.push(full)
+    }
+  }
+
+  return result
+}
+
+function resolveLocalUses(uses: string): string | null {
+  const resolved = uses.startsWith("/") ? uses : `${baseDir}/${uses.replace(/^\.\//, "")}`
+
+  if (!fs.existsSync(resolved)) return null
+
+  if (fs.statSync(resolved).isDirectory()) {
+    for (const name of ["action.yml", "action.yaml"]) {
+      const candidate = `${resolved}/${name}`
+      if (fs.existsSync(candidate)) return candidate
+    }
+    return null
+  }
+
+  return resolved
+}
+
+function usesFromSteps(steps: any[] | undefined): string[] {
+  return (steps ?? []).filter((s: any) => s?.uses).map((s: any) => s.uses)
+}
+
+function getUsesDeclarations(yaml: any): string[] {
+  const uses: string[] = []
+
+  for (const job of Object.values(yaml?.jobs ?? {}) as any[]) {
+    if (job?.uses) uses.push(job.uses)
+    uses.push(...usesFromSteps(job?.steps))
+  }
+
+  // composite actions
+  uses.push(...usesFromSteps(yaml?.runs?.steps))
+
+  return uses
+}
+
+const visited = new Set<string>()
+const files = collectFiles(basePath)
+
+while (files.length > 0) {
+  const path = files.shift()!
+
+  if (visited.has(path)) continue
+  visited.add(path)
 
   const content = fs.readFileSync(path, "utf8")
   const yaml = parse(content)
 
-  const jobs = yaml.jobs
-  if (!jobs) {
-    console.log(`No jobs in ${path}`)
-    continue
-  }
-
-  const jobsValues = Object.values(jobs)
-  const usesDeclarations = jobsValues
-    .map((v: any) => v.steps)
-    .flatMap((v: any) => v)
-    .filter((v: any) => v.uses)
-    .map((v: any) => v.uses)
-
-  const uniqueUsesDeclarations: string[] = [...new Set(usesDeclarations)]
+  const uniqueUsesDeclarations: string[] = [...new Set(getUsesDeclarations(yaml))]
 
   const notUpToDates = []
 
   for (const usesDeclaration of uniqueUsesDeclarations) {
+    if (usesDeclaration.startsWith("./") || usesDeclaration.startsWith("../") || usesDeclaration.startsWith("/")) {
+      const resolved = resolveLocalUses(usesDeclaration)
+      if (resolved && !visited.has(resolved)) files.push(resolved)
+      continue
+    }
+
+    if (usesDeclaration.startsWith("docker://") || !usesDeclaration.includes("@")) {
+      continue
+    }
+
     const split = usesDeclaration.split("@")
     const repo = split[0]
     const version = split[1]
