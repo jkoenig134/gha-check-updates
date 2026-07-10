@@ -153,41 +153,53 @@ while (files.length > 0) {
     });
     const lastFull = full[full.length - 1];
 
+    const tagsWithCorrectLength = tagsByTagLengths[version.length];
+    const lengthMatch = tagsWithCorrectLength?.length
+      ? tagsWithCorrectLength[tagsWithCorrectLength.length - 1]
+      : undefined;
+
     if (!lastSingle && !lastFull) {
-      const tagsWithCorrectLength = tagsByTagLengths[version.length];
-      if (tagsWithCorrectLength?.length) {
-        const versionToCompare =
-          tagsWithCorrectLength[tagsWithCorrectLength.length - 1];
-        if (versionToCompare !== version) {
+      if (lengthMatch) {
+        if (lengthMatch !== version) {
           notUpToDates.push(
-            `  Action '${usesDeclaration}' has a newer version available: '${versionToCompare}'.${
-              lastFull || lastSingle
-                ? ` You can also upgrade to '${lastSingle}' or '${lastFull}'.`
-                : ''
-            }`,
+            `  Action '${usesDeclaration}' has a newer version available: '${lengthMatch}'.`,
           );
         }
 
         continue;
-      } else {
-        notUpToDates.push(
-          `  Action '${usesDeclaration}' could not be checked. You can check available versions yourself: https://github.com/${repo}/tags`,
-        );
-        continue;
       }
+
+      notUpToDates.push(
+        `  Action '${usesDeclaration}' could not be checked. You can check available versions yourself: https://github.com/${repo}/tags`,
+      );
+      continue;
     }
 
     const versionToCompare = version.length === 2 ? lastSingle : lastFull;
 
     if (versionToCompare !== version) {
-      const latestVersions = [lastSingle, lastFull]
-        .filter((v) => typeof v !== 'undefined')
-        .map((v) => `'${v}'`)
-        .join(' or ');
+      // Prefer same-length tag as primary; surface major/full tags as alternatives
+      if (lengthMatch && lengthMatch !== version) {
+        const also = [lastSingle, lastFull]
+          .filter((v) => typeof v !== 'undefined' && v !== lengthMatch)
+          .map((v) => `'${v}'`)
+          .join(' or ');
 
-      notUpToDates.push(
-        `  Action '${usesDeclaration}' has a newer version available: ${latestVersions}.`,
-      );
+        notUpToDates.push(
+          `  Action '${usesDeclaration}' has a newer version available: '${lengthMatch}'.${
+            also ? ` You can also upgrade to ${also}.` : ''
+          }`,
+        );
+      } else {
+        const latestVersions = [lastSingle, lastFull]
+          .filter((v) => typeof v !== 'undefined')
+          .map((v) => `'${v}'`)
+          .join(' or ');
+
+        notUpToDates.push(
+          `  Action '${usesDeclaration}' has a newer version available: ${latestVersions}.`,
+        );
+      }
     }
   }
 
